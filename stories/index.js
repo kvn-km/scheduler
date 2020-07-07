@@ -6,10 +6,6 @@ import { action } from "@storybook/addon-actions";
 import "index.scss";
 
 import Button from "components/Button";
-import DayListItem from "components/DayListItem";
-import DayList from "components/DayList";
-import InterviewerListItem from "components/InterviewerListItem";
-import InterviewerList from "components/InterviewerList";
 
 storiesOf("Button", module)
   .addParameters({
@@ -26,6 +22,9 @@ storiesOf("Button", module)
       Disabled
     </Button>
   ));
+
+import DayListItem from "components/DayListItem";
+import DayList from "components/DayList";
 
 storiesOf("DayListItem", module) //Initiates Storybook and registers our DayListItem component
   .addParameters({
@@ -66,6 +65,9 @@ storiesOf("DayList", module)
   .add("Tuesday", () => (
     <DayList days={days} day={"Tuesday"} setDay={(event) => { action("setDay")(days.name); }} />
   ));
+
+import InterviewerListItem from "components/InterviewerListItem";
+import InterviewerList from "components/InterviewerList";
 
 const interviewer = {
   id: 1,
@@ -116,13 +118,84 @@ storiesOf("InterviewerList", module)
   .add("Initial", () => (
     <InterviewerList
       interviewers={interviewers}
-      setInterviewer={action("setInterviewer")}
+      onChange={action("setInterviewer")}
     />
   ))
   .add("Preselected", () => (
     <InterviewerList
       interviewers={interviewers}
-      interviewer={3}
-      setInterviewer={action("setInterviewer")}
+      value={3}
+      onChange={action("setInterviewer")}
     />
   ));
+
+import Appointment from "components/Appointment";
+import Header from "components/Appointment/Header";
+import Empty from "components/Appointment/Empty";
+import Show from "components/Appointment/Show";
+import Confirm from "components/Appointment/Confirm";
+import Deleting from "components/Appointment/Deleting";
+import Saving from "components/Appointment/Saving";
+import Error from "components/Appointment/Error";
+import Form from "components/Appointment/Form";
+
+// let theTime = new Date();
+let theTime = "12pm";
+let theStudent = "Kevin Kim";
+let theMessage = {
+  confirm: "Delete the appointment?",
+  deleting: "Deleting",
+  saving: "Saving",
+  errorDeleting: "Could not delete appointment.",
+  errorSaving: "Could not save appointment."
+};
+
+storiesOf("Appointment", module)
+  .addParameters({
+    backgrounds: [{ name: "white", value: "#fff", default: true }]
+  })
+  .add("Appointment", () => (<Appointment />))
+  .add("Appointment with Time", () => (
+    <Appointment
+      time={theTime}
+    />
+  ))
+  .add("Header", () => (<Header time={theTime} />))
+  .add("Empty", () => (<Empty onAdd={action("onAdd")} />))
+  .add("Show", () => (<Show
+    student={theStudent}
+    interviewer={interviewer} // found above
+    onEdit={action("onEdit")}
+    onDelete={action("onDelete")}
+  />))
+  .add("Confirm", () => (<Confirm
+    message={theMessage.confirm}
+    onConfirm={action("onConfirm")}
+    onCancel={action("onCancel")}
+  />))
+  .add("Deleting", () => (<Deleting
+    message={theMessage.deleting}
+  />))
+  .add("Saving", () => (<Saving
+    message={theMessage.saving}
+  />))
+  .add("Error Deleting", () => (<Error
+    message={theMessage.errorDeleting}
+    onClose={action("onClose")}
+  />))
+  .add("Error Saving", () => (<Error
+    message={theMessage.errorSaving}
+    onClose={action("onClose")}
+  />))
+  .add("Form Create", () => (<Form
+    interviewers={interviewers}
+    onSave={action("onSave")}
+    onCancel={action("onCancel")}
+  />))
+  .add("Form Edit", () => (<Form
+    name={theStudent}
+    interviewers={interviewers}
+    interviewer={3}
+    onSave={action("onSave")}
+    onCancel={action("onCancel")}
+  />));
