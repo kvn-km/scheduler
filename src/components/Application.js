@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 import "components/Application.scss";
-import getAppointmentsForDay from "../helpers/selectors";
+import { getAppointmentsForDay, getInterview } from "../helpers/selectors";
 
 import DayList from "./DayList";
 import Appointment from "./Appointment";
@@ -44,14 +44,22 @@ export default function Application(props) {
       )
     ])
       .then((all) => {
-        setState(prev => ({ days: all[0].data, appointments: all[1].data, interviewers: all[2] }));
-        console.log(state.interviewers);
-
+        setState(prev => ({ days: all[0].data, appointments: all[1].data, interviewers: all[2].data }));
       });
   }, []);
 
   const appointments = getAppointmentsForDay(state, state.day);
-
+  const schedule = appointments.map((appointment) => {
+    const interview = getInterview(state, appointment.interview);
+    return (
+      <Appointment
+        key={appointment.id}
+        id={appointment.id}
+        time={appointment.time}
+        interview={interview}
+      />
+    );
+  });
 
   return (
     <main className="layout">
@@ -70,10 +78,7 @@ export default function Application(props) {
       </section>
       <section className="schedule">
         {/* Replace this with the schedule elements durint the "The Scheduler" activity. */}
-        {appointments.map(appoint => <Appointment
-          key={appoint.id}
-          {...appoint} // every item in appoint prop becomes a prop definition
-        />)}
+        {schedule}
       </section>
     </main>
   );
