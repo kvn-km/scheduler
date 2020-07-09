@@ -3,7 +3,7 @@ import axios from "axios";
 
 import "components/Application.scss";
 import { getAppointmentsForDay, getInterview } from "../helpers/selectors";
-import { useVisualMode } from "../hooks/useVisualMode";
+import useVisualMode from "../hooks/useVisualMode";
 
 import DayList from "./DayList";
 import Appointment from "./Appointment";

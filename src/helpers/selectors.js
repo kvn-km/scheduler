@@ -1,16 +1,14 @@
 
 export function getAppointmentsForDay(state, day) {
-  let theState = {};
+  let appointmentIds = [];
   for (let days of state.days) {
     if (days.name === day) {
-      theState = days.appointments;
+      appointmentIds = days.appointments;
     }
   }
   let daysAppointments = [];
-  if (theState.length > 0) {
-    for (let appointment of theState) {
-      daysAppointments.push(state.appointments[appointment]);
-    }
+  for (let id of appointmentIds) {
+    daysAppointments.push(state.appointments[id]);
   }
   return daysAppointments;
 }
@@ -42,4 +40,18 @@ export function getInterview(state, interview) {
     interviewer: state.interviewers[interview.interviewer]
   };
   return theInterview;
+}
+
+export function getInterviewersForDay(state, day) {
+  let interviewerIds = [];
+  for (let days of state.days) {
+    if (days.name === day) {
+      interviewerIds = days.interviewers;
+    }
+  }
+  let daysInterviewers = [];
+  for (let id of interviewerIds) {
+    daysInterviewers.push(state.interviewers[id]);
+  }
+  return daysInterviewers;
 }
