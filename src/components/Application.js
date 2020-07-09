@@ -21,9 +21,9 @@ export default function Application(props) {
 
   useEffect(() => {
     Promise.all([
-      Promise.resolve(axios.get(`http://localhost:8001/api/days`)),
-      Promise.resolve(axios.get(`http://localhost:8001/api/appointments`)),
-      Promise.resolve(axios.get(`http://localhost:8001/api/interviewers`))
+      Promise.resolve(axios.get(`/api/days`)), // http://localhost:8001
+      Promise.resolve(axios.get(`/api/appointments`)),
+      Promise.resolve(axios.get(`/api/interviewers`))
     ])
       .then((all) => {
         setState(({
@@ -39,21 +39,18 @@ export default function Application(props) {
   const interviewers = getInterviewersForDay(state, state.day);
 
   const bookInterview = (id, interview) => {
-    console.log(id, interview);
+    // console.log(id, interview); // this info bubbles up from the form onSave
+    const appointment = {
+      ...state.appointments[id],
+      interview: { ...interview }
+    };
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
+    // console.log(appointments);
+    setState({ ...state, appointments });
   };
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   const schedule = appointments.map((appointment) => {
