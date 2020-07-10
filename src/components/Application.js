@@ -51,32 +51,26 @@ export default function Application(props) {
       ...state.appointments,
       [id]: appointment
     };
-    Promise.resolve(axios.put(`/api/appointments/${id}`, appointments[id]))
-      .then(res => {
-        console.log("AXIOS PUT SUCCESS!");
-      })
-      .catch(e => console.log(e))
-      .finally(console.log("AXIOS PUT PROCESS COMPLETE!"));
-    setState({ ...state, appointments });
+    return Promise.resolve(axios.put(`/api/appointments/${id}`, appointments[id]))
+      .then(() => (setState({ ...state, appointments })))
+      .catch(() => console.log("AXIOS PUT ERROR"));
   };
 
   const cancelInterview = (id) => {
     console.log(id);
-    Promise.resolve(axios.delete(`/api/appointments/${id}`))
+    return Promise.resolve(axios.delete(`/api/appointments/${id}`))
       .then(() => {
-        console.log("AXIOS DELETE SUCCESS!");
+        const appointment = {
+          ...state.appointments[id],
+          interview: null
+        };
+        const appointments = {
+          ...state.appointments,
+          [id]: appointment
+        };
+        setState({ ...state, appointments });
       })
-      .catch(e => console.log(e))
-      .finally(console.log("AXIOS DELETE PROCESS COMPLETE!"));
-    const appointment = {
-      ...state.appointments[id],
-      interview: null
-    };
-    const appointments = {
-      ...state.appointments,
-      [id]: appointment
-    };
-    setState({ ...state, appointments });
+      .catch(() => console.log("AXIOS DELETE ERROR"));
   };
 
   const schedule = appointments.map((appointment) => {

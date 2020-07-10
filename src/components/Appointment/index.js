@@ -9,6 +9,7 @@ import Form from "./Form";
 import Saving from "./Saving";
 import Deleting from "./Deleting";
 import Confirm from "./Confirm";
+import Error from "./Error";
 
 export default function Appointment(props) {
 
@@ -19,12 +20,14 @@ export default function Appointment(props) {
   const DELETING = "DELETING";
   const CONFIRM = "CONFIRM";
   const EDIT = "EDIT";
+  const ERROR_SAVE = "ERROR_SAVE";
+  const ERROR_DELETE = "ERROR_DELETE";
 
   const { mode, transition, back } = useVisualMode(
     props.interview ? SHOW : EMPTY
   );
 
-  const save = (name, interviewer) => {
+  const save = (name, interviewer, res) => {
     const interview = {
       student: name,
       interviewer
@@ -32,19 +35,23 @@ export default function Appointment(props) {
     transition(SAVING);
     // timeout not needed
     // kev's own input to see the SAVE mode
-    const timeOut = Math.random() * 1500;
+    const timeOut = Math.random() * 1000;
     setTimeout(() => {
-      props.bookInterview(props.id, interview);
-      transition(SHOW);
+      props
+        .bookInterview(props.id, interview)
+        .then(res => res ? transition(ERROR_SAVE, true) : transition(SHOW))
+        .catch(error => transition(ERROR_SAVE, true));
     }, timeOut);
   };
 
-  const deleting = (id) => {
-    transition(DELETING);
-    const timeOut = Math.random() * 1500;
+  const deleting = (res) => {
+    transition(DELETING, true);
+    const timeOut = Math.random() * 1000;
     setTimeout(() => {
-      props.cancelInterview(props.id);
-      transition(EMPTY);
+      props
+        .cancelInterview(props.id)
+        .then(transition(EMPTY))
+        .catch(error => transition(ERROR_DELETE, true));
     }, timeOut);
   };
 
@@ -54,9 +61,9 @@ export default function Appointment(props) {
 
   const edit = (x) => {
     transition(EDIT);
-    // const props = { name: props.interview.student, interviewer: props.interview.interviewer };
-
   };
+
+
 
   return (
     <article className="appointment">
@@ -88,6 +95,10 @@ export default function Appointment(props) {
           name={props.interview.student}
           interviewer={props.interview.interviewer.id}
         />}
+      {mode === ERROR_SAVE &&
+        <Error message="Saving" onClose={back} />}
+      {mode === ERROR_DELETE &&
+        <Error message="Deleting" onClose={back} />}
     </article>
   );
 }
