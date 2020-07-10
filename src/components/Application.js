@@ -26,12 +26,15 @@ export default function Application(props) {
       Promise.resolve(axios.get(`/api/interviewers`))
     ])
       .then((all) => {
+        console.log("AXIOS GET SUCCESS!");
         setState(({
           days: all[0].data,
           appointments: all[1].data,
           interviewers: all[2].data
         }));
-      });
+      })
+      .catch(e => console.log(e))
+      .finally(console.log("AXIOS GET PROCESS COMPLETE!"));
   }, []);
 
 
@@ -48,10 +51,17 @@ export default function Application(props) {
       ...state.appointments,
       [id]: appointment
     };
-    // console.log(appointments);
-    setState({ ...state, appointments });
-  };
 
+    Promise.resolve(axios.put(`/api/appointments/${id}`, appointments[id]))
+      .then(res => {
+        console.log("AXIOS PUT SUCCESS!");
+      })
+      .catch(e => console.log(e))
+      .finally(console.log("AXIOS PUT PROCESS COMPLETE!"));
+
+    setState({ ...state, appointments });
+
+  };
 
   const schedule = appointments.map((appointment) => {
     const interview = getInterview(state, appointment.interview);
@@ -94,4 +104,4 @@ export default function Application(props) {
       </section>
     </main>
   );
-}
+};
