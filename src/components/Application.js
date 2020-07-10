@@ -3,7 +3,7 @@ import axios from "axios";
 
 import "components/Application.scss";
 import { getAppointmentsForDay, getInterview, getInterviewersForDay } from "../helpers/selectors";
-import useVisualMode from "../hooks/useVisualMode";
+// import useVisualMode from "../hooks/useVisualMode";
 
 import DayList from "./DayList";
 import Appointment from "./Appointment";
@@ -51,7 +51,6 @@ export default function Application(props) {
       ...state.appointments,
       [id]: appointment
     };
-
     Promise.resolve(axios.put(`/api/appointments/${id}`, appointments[id]))
       .then(res => {
         console.log("AXIOS PUT SUCCESS!");
@@ -59,8 +58,28 @@ export default function Application(props) {
       .catch(e => console.log(e))
       .finally(console.log("AXIOS PUT PROCESS COMPLETE!"));
 
-    setState({ ...state, appointments });
+    const spots = {};
 
+    setState({ ...state, appointments });
+  };
+
+  const cancelInterview = (id) => {
+    console.log(id);
+    Promise.resolve(axios.delete(`/api/appointments/${id}`))
+      .then(() => {
+        console.log("AXIOS DELETE SUCCESS!");
+      })
+      .catch(e => console.log(e))
+      .finally(console.log("AXIOS DELETE PROCESS COMPLETE!"));
+    const appointment = {
+      ...state.appointments[id],
+      interview: null
+    };
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
+    setState({ ...state, appointments });
   };
 
   const schedule = appointments.map((appointment) => {
@@ -71,8 +90,9 @@ export default function Application(props) {
         id={appointment.id}
         time={appointment.time}
         interview={interview}
-        bookInterview={bookInterview}
         interviewers={interviewers}
+        bookInterview={bookInterview}
+        cancelInterview={cancelInterview}
       />
     );
   });
@@ -88,8 +108,8 @@ export default function Application(props) {
         <hr className="sidebar__separator sidebar--centered" />
         <nav className="sidebar__menu">
           <DayList
-            days={state.days}
             day={state.day}
+            days={state.days}
             setDay={setDay}
           />
         </nav>
