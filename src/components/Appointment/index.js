@@ -18,6 +18,7 @@ export default function Appointment(props) {
   const SAVING = "SAVING";
   const DELETING = "DELETING";
   const CONFIRM = "CONFIRM";
+  const EDIT = "EDIT";
 
   const { mode, transition, back } = useVisualMode(
     props.interview ? SHOW : EMPTY
@@ -51,15 +52,42 @@ export default function Appointment(props) {
     transition(CONFIRM);
   };
 
+  const edit = (x) => {
+    transition(EDIT);
+    // const props = { name: props.interview.student, interviewer: props.interview.interviewer };
+
+  };
+
   return (
     <article className="appointment">
       <Header time={props.time} />
-      {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
-      {mode === SHOW && <Show student={props.interview.student} interviewer={props.interview.interviewer} onDelete={() => deleteConfirmation} />}
-      {mode === CREATE && <Form interviewers={props.interviewers} onCancel={back} onSave={save} />}
-      {mode === SAVING && <Saving />}
-      {mode === DELETING && <Deleting />}
-      {mode === CONFIRM && <Confirm onCancel={back} onConfirm={deleting} />}
+      {mode === EMPTY &&
+        <Empty onAdd={() => transition(CREATE)} />}
+      {mode === SHOW &&
+        <Show
+          student={props.interview.student}
+          interviewer={props.interview.interviewer}
+          onDelete={() => deleteConfirmation}
+          onEdit={() => edit} />}
+      {mode === CREATE &&
+        <Form
+          interviewers={props.interviewers}
+          onCancel={back}
+          onSave={save} />}
+      {mode === SAVING &&
+        <Saving />}
+      {mode === DELETING &&
+        <Deleting />}
+      {mode === CONFIRM &&
+        <Confirm onCancel={back} onConfirm={deleting} />}
+      {mode === EDIT &&
+        <Form
+          interviewers={props.interviewers}
+          onCancel={back}
+          onSave={save}
+          name={props.interview.student}
+          interviewer={props.interview.interviewer.id}
+        />}
     </article>
   );
 }

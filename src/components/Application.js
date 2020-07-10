@@ -57,9 +57,6 @@ export default function Application(props) {
       })
       .catch(e => console.log(e))
       .finally(console.log("AXIOS PUT PROCESS COMPLETE!"));
-
-    const spots = {};
-
     setState({ ...state, appointments });
   };
 

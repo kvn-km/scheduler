@@ -34,6 +34,7 @@ export default function Form(props) {
             /*
               This must be a controlled component: below
             */
+            // value={name}
             value={name}
             onChange={(event) => setName(event.target.value)}
           /*
