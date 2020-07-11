@@ -17,17 +17,35 @@ export default function useVisualMode(importedStuff) {
     ])
       .then((all) => {
         console.log("AXIOS GET SUCCESS!");
-        setState(({
+        setState({
           days: all[0].data,
           appointments: all[1].data,
-          interviewers: all[2].data
-        }));
+          interviewers: all[2].data,
+        });
       })
       .catch(e => console.log(e))
       .finally(console.log("AXIOS GET PROCESS COMPLETE!"));
   }, []);
 
   const setDay = day => setState({ ...state, day });
+
+  const reduceSpots = (id) => {
+
+    let spot = state.days[Math.floor(id / 5)].spots;
+    spot = spot - 1;
+    const aDay = {
+      ...state.days[Math.floor(id / 5)],
+      spots: spot
+    };
+    const days = {
+      ...state.days,
+      [Math.floor(id / 5)]: aDay
+    };
+
+
+    return setState({ ...state, days });
+  };
+
 
   const bookInterview = (id, interview) => {
     const appointment = {
@@ -38,24 +56,29 @@ export default function useVisualMode(importedStuff) {
       ...state.appointments,
       [id]: appointment
     };
+    reduceSpots(id);
+
     return Promise.resolve(axios.put(`/api/appointments/${id}`, appointments[id]))
-      .then(() => (setState({ ...state, appointments })))
+      .then(() => {
+        setState({ ...state, appointments });
+        console.log("AFTER:", state.days[Math.floor(id / 5)].spots);
+      })
       .catch(() => console.log("AXIOS PUT ERROR"));
   };
 
   const cancelInterview = (id) => {
-    console.log(id);
+    const appointment = {
+      ...state.appointments[id],
+      interview: null
+    };
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
+
     return Promise.resolve(axios.delete(`/api/appointments/${id}`))
       .then(() => {
-        const appointment = {
-          ...state.appointments[id],
-          interview: null
-        };
-        const appointments = {
-          ...state.appointments,
-          [id]: appointment
-        };
-        setState({ ...state, appointments });
+        setState(() => ({ ...state, appointments }));
       })
       .catch(() => console.log("AXIOS DELETE ERROR"));
   };
@@ -63,4 +86,4 @@ export default function useVisualMode(importedStuff) {
   return {
     state, setDay, bookInterview, cancelInterview
   };
-}
+};
