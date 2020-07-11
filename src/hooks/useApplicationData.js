@@ -29,23 +29,19 @@ export default function useVisualMode(importedStuff) {
 
   const setDay = day => setState({ ...state, day });
 
-  const reduceSpots = (id) => {
+  //
+  //
 
-    let spot = state.days[Math.floor(id / 5)].spots;
-    spot = spot - 1;
-    const aDay = {
-      ...state.days[Math.floor(id / 5)],
-      spots: spot
-    };
-    const days = {
-      ...state.days,
-      [Math.floor(id / 5)]: aDay
-    };
-
-
-    return setState({ ...state, days });
+  const reduceSpots = (arrIndex) => {
+    let spots = state.days[arrIndex].spots;
+    spots--;
+    let days = state.days; //array
+    let aDay = {};
+    aDay = days[arrIndex];
+    let theDay = { ...aDay, spots };
+    days[arrIndex] = theDay;
+    setState({ ...state, days });
   };
-
 
   const bookInterview = (id, interview) => {
     const appointment = {
@@ -56,15 +52,42 @@ export default function useVisualMode(importedStuff) {
       ...state.appointments,
       [id]: appointment
     };
-    reduceSpots(id);
-
-    return Promise.resolve(axios.put(`/api/appointments/${id}`, appointments[id]))
-      .then(() => {
-        setState({ ...state, appointments });
-        console.log("AFTER:", state.days[Math.floor(id / 5)].spots);
-      })
-      .catch(() => console.log("AXIOS PUT ERROR"));
+    reduceSpots(Math.ceil(id / 5) - 1);
+    setState({ ...state, appointments });
+    return Promise.resolve(axios.put(`api/appointments/${id}`, appointments[id]));
   };
+
+
+  // john's solution below
+
+  // const spotsRemaining = (id, increaseBy) => {
+  //   for (let day of state.days)
+  //     if (day.appointments.includes(id)) {
+  //       day.spots += increaseBy;
+  //     }
+  // };
+
+  // const bookInterview = (id, interview) => {
+  //   const appointment = {
+  //     ...state.appointments[id],
+  //     interview: { ...interview }
+  //   };
+  //   const appointments = {
+  //     ...state.appointments,
+  //     [id]: appointment
+  //   };
+  //   // spotsRemaining(id, -1);
+  //   // setState({ ...state, appointments });
+  //   return axios.put(`api/appointments/${id}`, appointments[id])
+  //     .then(() => {
+  //       spotsRemaining(id, -1);
+  //       setState({ ...state, appointments });
+  //     });
+  // };
+
+
+  //
+  //
 
   const cancelInterview = (id) => {
     const appointment = {
@@ -76,10 +99,8 @@ export default function useVisualMode(importedStuff) {
       [id]: appointment
     };
 
+    setState({ ...state, appointments });
     return Promise.resolve(axios.delete(`/api/appointments/${id}`))
-      .then(() => {
-        setState(() => ({ ...state, appointments }));
-      })
       .catch(() => console.log("AXIOS DELETE ERROR"));
   };
 

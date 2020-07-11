@@ -33,26 +33,18 @@ export default function Appointment(props) {
       interviewer
     };
     transition(SAVING);
-    // timeout not needed
-    // kev's own input to see the SAVE mode
-    const timeOut = Math.random() * 1000;
-    setTimeout(() => {
-      props
-        .bookInterview(props.id, interview)
-        .then(res => res ? transition(ERROR_SAVE, true) : transition(SHOW))
-        .catch(error => transition(ERROR_SAVE, true));
-    }, timeOut);
+    props
+      .bookInterview(props.id, interview)
+      .then(transition(SHOW))
+      .catch(error => transition(ERROR_SAVE, true));
   };
 
   const deleting = (res) => {
     transition(DELETING, true);
-    const timeOut = Math.random() * 1000;
-    setTimeout(() => {
-      props
-        .cancelInterview(props.id)
-        .then(transition(EMPTY))
-        .catch(error => transition(ERROR_DELETE, true));
-    }, timeOut);
+    props
+      .cancelInterview(props.id)
+      .then(transition(EMPTY))
+      .catch(error => transition(ERROR_DELETE, true));
   };
 
   const deleteConfirmation = () => {
