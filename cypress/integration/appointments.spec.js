@@ -1,15 +1,11 @@
 describe("APPOINTMENTS", () => {
-  // it("", () => {
-  //   cy.visit("/");
-  // });
-
   beforeEach(() => {
     cy.request("GET", "/api/debug/reset");
     cy.visit("/");
     cy.contains("Monday");
   });
 
-  xit("should book an interview", () => {
+  it("should book an interview", () => {
     // Visits the root of our web server
     cy.visit("/")
       .contains("Monday");
@@ -62,11 +58,5 @@ describe("APPOINTMENTS", () => {
     // Sees that the appointment slot is empty
     cy.contains(".appointment__card--show", "Archie Cohen")
       .should("not.exist");
-
-
-
   });
-
-
-
 })
