@@ -16,7 +16,7 @@ export default function useVisualMode(importedStuff) {
       Promise.resolve(axios.get(`/api/interviewers`)),
     ])
       .then((all) => {
-        console.log("AXIOS GET SUCCESS!");
+        // console.log("AXIOS GET SUCCESS!");
         setState((previous) => ({
           ...previous,
           days: all[0].data,
@@ -24,8 +24,8 @@ export default function useVisualMode(importedStuff) {
           interviewers: all[2].data,
         }));
       })
-      .catch((e) => console.log(e))
-      .finally(console.log("AXIOS GET PROCESS COMPLETE!"));
+      .catch((e) => console.log(e));
+    // .finally(console.log("AXIOS GET PROCESS COMPLETE!"));
   }, []);
 
   const setDay = (day) => setState({ ...state, day });

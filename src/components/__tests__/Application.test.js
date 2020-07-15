@@ -12,7 +12,8 @@ import {
   getByAltText,
   getByPlaceholderText,
   act,
-  queryByText
+  queryByText,
+  queryByAltText
 } from "@testing-library/react";
 
 import Application from "../Application";
@@ -29,42 +30,28 @@ describe("APPLICATION", () => {
     });
   });
 
-  // below is my solution
-  // below THIS is compass' solution
   it("MINE: loads data, books an interview and reduces the spots remaining for Monday by 1", async () => {
     const { getByText, container, debug } = render(<Application />);
     await waitForElement(() => getByText("Archie Cohen"));
-    // click ADD
     const appointment = getAllByTestId(container, "appointment")[0];
     fireEvent.click(getByAltText(appointment, "Add"));
-    // test
     expect(getByPlaceholderText(appointment, "Enter Student Name")).toBeInTheDocument();
     expect(getByAltText(appointment, "Sylvia Palmer")).toBeInTheDocument();
-    // input student name
     const input = getByPlaceholderText(appointment, "Enter Student Name");
     fireEvent.change(input, { target: { value: "Kevin Kim" } });
-    // select interviewer
     const interviewer = getByAltText(appointment, "Sylvia Palmer");
     fireEvent.click(interviewer, { target: { alt: "Sylvia Palmer" } });
-    // test
     expect(interviewer).toHaveClass("interviewers__item--selected");
-    // click save
     act(() => {
       fireEvent.click(getByText("Save"));
     });
-    // test that we are in SAVING mode
     expect(getByText("Saving")).toBeInTheDocument();
-    // wait for the SAVING mode to transition to SHOW mode
     await waitForElementToBeRemoved(() => getByText("Saving"));
-    // test that KEVIN KIM Student is now shown in interview spot
     expect(getByText("Kevin Kim")).toBeInTheDocument();
-    //
     const day = getAllByTestId(container, "day")
       .find(day => queryByText(day, "Monday"));
-    // console.log(prettyDOM(day));
     expect(day).toHaveTextContent("no spots remaining");
   });
-
 
   it("COMPASS: loads data, books an interview and reduces the spots remaining for Monday by 1", async () => {
     const { container, debug } = render(<Application />);
@@ -84,4 +71,37 @@ describe("APPLICATION", () => {
     );
     expect(getByText(day, "no spots remaining")).toBeInTheDocument();
   });
+
+  it("MINE: loads data, cancels an interview and increases the spots remaining for Monday by 1", async () => {
+    const { container, debug, getByAltText } = render(<Application />);
+    await waitForElement(() => getByText(container, "Archie Cohen"));
+    const appointment = getAllByTestId(container, "showAppointment")[0];
+    fireEvent.click(getByAltText("Delete"));
+    const confirmation = getAllByTestId(container, "confirmation")[0];
+    fireEvent.click(getByText(confirmation, "Confirm"));
+    expect(getByText(container, "Deleting")).toBeInTheDocument();
+    const schedule = getAllByTestId(container, "appointment")[0];
+    await waitForElement(() => queryByAltText(schedule, "Add"));
+    const day = getAllByTestId(container, "day").find(day => queryByText(day, "Monday"));
+    expect(getByText(day, "2 spots remaining")).toBeInTheDocument();
+  });
+
+  it("COMPASS: load data, cancels an interview and increases the spots remaining for Monday by 1", async () => {
+    const { container } = render(<Application />);
+    await waitForElement(() => getByText(container, "Archie Cohen"));
+    const appointment = getAllByTestId(container, "appointment").find(appointment => queryByText(appointment, "Archie Cohen"));
+    fireEvent.click(queryByAltText(appointment, "Delete"));
+    expect(getByText(appointment, "Are you sure you want to delete?")).toBeInTheDocument();
+    fireEvent.click(queryByText(appointment, "Confirm"));
+    expect(getByText(appointment, "Deleting")).toBeInTheDocument();
+    await waitForElement(() => getByAltText(appointment, "Add"));
+    const day = getAllByTestId(container, "day").find(day =>
+      queryByText(day, "Monday")
+    );
+    expect(getByText(day, "2 spots remaining")).toBeInTheDocument();
+  });
+
+
+
+
 });
