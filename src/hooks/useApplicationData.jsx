@@ -41,7 +41,7 @@ export default function useVisualMode(importedStuff) {
     return days;
   };
 
-  const bookInterview = (id, interview) => {
+  const bookInterview = (id, interview, toEdit) => {
     const appointment = {
       ...state.appointments[id],
       interview: { ...interview },
@@ -50,9 +50,15 @@ export default function useVisualMode(importedStuff) {
       ...state.appointments,
       [id]: appointment,
     };
-    const days = remainingSpots(Math.ceil(id / 5) - 1, -1);
-    setState({ ...state, appointments, days });
-    return Promise.resolve(axios.put(`api/appointments/${id}`, appointments[id]));
+
+    if (toEdit) {
+      setState({ ...state, appointments });
+      return Promise.resolve(axios.put(`api/appointments/${id}`, appointments[id]));
+    } else {
+      const days = remainingSpots(Math.ceil(id / 5) - 1, -1);
+      setState({ ...state, appointments, days });
+      return Promise.resolve(axios.put(`api/appointments/${id}`, appointments[id]));
+    }
   };
 
   const cancelInterview = (id) => {

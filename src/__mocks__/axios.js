@@ -99,14 +99,14 @@ export default {
       });
     }
 
-    if (url === "/api/days") {
+    if (url === "/api/appointments") {
       return Promise.resolve({
         status: 204,
         statusText: "No Content",
       });
     }
 
-    if (url === "/api/days") {
+    if (url === "/api/interviewers") {
       return Promise.resolve({
         status: 204,
         statusText: "No Content",
@@ -122,14 +122,14 @@ export default {
       });
     }
 
-    if (url === "/api/days") {
+    if (url === "/api/appointments") {
       return Promise.resolve({
         status: 204,
         statusText: "No Content",
       });
     }
 
-    if (url === "/api/days") {
+    if (url === "/api/interviewers") {
       return Promise.resolve({
         status: 204,
         statusText: "No Content",
