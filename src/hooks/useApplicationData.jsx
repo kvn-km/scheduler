@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
-export default function useVisualMode(importedStuff) {
+export default function useVisualMode() {
   const [state, setState] = useState({
     day: "Monday",
     days: [],
@@ -11,12 +11,11 @@ export default function useVisualMode(importedStuff) {
 
   useEffect(() => {
     Promise.all([
-      Promise.resolve(axios.get(`/api/days`)), // http://localhost:8001
+      Promise.resolve(axios.get(`/api/days`)),
       Promise.resolve(axios.get(`/api/appointments`)),
       Promise.resolve(axios.get(`/api/interviewers`)),
     ])
       .then((all) => {
-        // console.log("AXIOS GET SUCCESS!");
         setState((previous) => ({
           ...previous,
           days: all[0].data,
@@ -25,10 +24,38 @@ export default function useVisualMode(importedStuff) {
         }));
       })
       .catch((e) => console.log(e));
-    // .finally(console.log("AXIOS GET PROCESS COMPLETE!"));
   }, []);
 
   const setDay = (day) => setState({ ...state, day });
+  let socket = useRef(null);
+  let theState = useRef({ ...state });
+
+  useEffect(() => {
+    socket.current = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+    socket.current.onopen = function (event) {
+      socket.current.send("New Client Connected");
+    };
+
+    socket.current.onmessage = function (event) {
+      const info = JSON.parse(event.data);
+
+      if (info.type === "SET_INTERVIEW") {
+        if (info.interview === null) {
+          cancelInterview(info.id);
+        } else {
+          if (theState.current.appointments[info["id"]]["interview"] === null) {
+            bookInterview(info.id, info.interview, false);
+          } else {
+            bookInterview(info.id, info.interview, true);
+          }
+        }
+      }
+    };
+
+    //
+    //
+    //
+  }, []);
 
   const remainingSpots = (arrIndex, x) => {
     let spots = state.days[arrIndex].spots;
@@ -72,7 +99,7 @@ export default function useVisualMode(importedStuff) {
     };
     const days = remainingSpots(Math.ceil(id / 5) - 1, +1);
     setState({ ...state, appointments, days });
-    return Promise.resolve(axios.delete(`/api/appointments/${id}`)).catch(() => console.log("AXIOS DELETE ERROR"));
+    return Promise.resolve(axios.delete(`/api/appointments/${id}`));
   };
 
   return {
