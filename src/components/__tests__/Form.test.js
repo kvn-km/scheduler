@@ -40,7 +40,7 @@ describe("FORM", () => {
     expect(onSave).not.toHaveBeenCalled();
   });
 
-  xit("calls onSave function when the name is defined", () => {
+  it("calls onSave function when the name is defined", () => {
     const onSave = jest.fn();
     const { getByText, queryByText } = render(
       <Form
@@ -55,7 +55,7 @@ describe("FORM", () => {
     expect(onSave).toHaveBeenCalledWith("Lydia Miller-Jones", null);
   });
 
-  xit("submits the name entered by the user", () => {
+  it("submits the name entered by the user", () => {
     const onSave = jest.fn();
     const { getByText, getByPlaceholderText } = render(
       <Form interviewers={interviewers} onSave={onSave} />
@@ -67,7 +67,7 @@ describe("FORM", () => {
     expect(onSave).toHaveBeenCalledWith("Lydia Miller-Jones", null);
   });
 
-  xit("can successfully save after trying to submit an empty student name", () => {
+  it("can successfully save after trying to submit an empty student name", () => {
     const onSave = jest.fn();
     const { getByText, getByPlaceholderText, queryByText } = render(
       <Form interviewers={interviewers} onSave={onSave} />
@@ -84,7 +84,7 @@ describe("FORM", () => {
     expect(onSave).toHaveBeenCalledWith("Lydia Miller-Jones", null);
   });
 
-  xit("calls onCancel and resets the input field", () => {
+  it("calls onCancel and resets the input field", () => {
     const onCancel = jest.fn();
     const { getByText, getByPlaceholderText, queryByText } = render(
       <Form
