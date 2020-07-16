@@ -8,12 +8,8 @@ export default function Form(props) {
   const [error, setError] = useState("");
 
   function validate() {
-    if (name === "") {
-      setError("Student name cannot be blank");
-      return;
-    }
-    if (interviewer === null) {
-      setError("Please select an interviewer");
+    if (name === "" || interviewer === null) {
+      setError("Please enter a student name and select an interviewer");
       return;
     }
 
@@ -41,15 +37,8 @@ export default function Form(props) {
             name="name"
             type="text"
             placeholder="Enter Student Name"
-            /*
-              This must be a controlled component: below
-            */
-            // value={name}
             value={name}
             onChange={(event) => setName(event.target.value)}
-            /*
-            This must be a controlled component: above
-          */
           />
         </form>
         <section className="appointment__validation">{error}</section>
