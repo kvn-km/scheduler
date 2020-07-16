@@ -84,7 +84,7 @@ describe("FORM", () => {
     expect(onSave).toHaveBeenCalledWith("Lydia Miller-Jones", null);
   });
 
-  it("calls onCancel and resets the input field", () => {
+  xit("calls onCancel and resets the input field", () => {
     const onCancel = jest.fn();
     const { getByText, getByPlaceholderText, queryByText } = render(
       <Form
@@ -94,9 +94,7 @@ describe("FORM", () => {
         onCancel={onCancel}
       />
     );
-
     fireEvent.click(getByText("Save"));
-
     fireEvent.change(getByPlaceholderText("Enter Student Name"), {
       target: { value: "Lydia Miller-Jones" }
     });
