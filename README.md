@@ -33,7 +33,7 @@ This app was built primarily with ReactJS, and features custom hooks.
 
 ### Installaton / Startup Instructions
 
-Online at: https://bit.ly/2CeZbR7
+Online at: https://interview-scheduler-spa.netlify.app/
 
 Or locally:
 
