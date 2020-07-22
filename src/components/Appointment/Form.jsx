@@ -12,16 +12,13 @@ export default function Form(props) {
       setError("student name cannot be blank");
       return;
     }
-
     props.toEdit ? props.onSave(name, interviewer, true) : props.onSave(name, interviewer);
     setError("");
   }
-
   const resetForm = () => {
     setName("");
     setInterviewer(null);
   };
-
   const cancel = () => {
     resetForm();
     props.onCancel();
